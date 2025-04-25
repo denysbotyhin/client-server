@@ -5,4 +5,5 @@ prepare:
 	mkdir build
 
 build:
-	cmake --build . --config Release -j 10 --
+	cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Debug
+	cmake --build build --config Release

@@ -12,6 +12,7 @@ The project uses CMake build tools for project configuration.
 You will need a C++ compiler which supports the C++20 standard. Tested with Clang 16.0.0 and GNU 14.2
 
 * clone the repository
+* `make prepare`
 * `make build`
 * the executables can be found in the {project_root}/build/bin/Release
 

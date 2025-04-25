@@ -78,7 +78,7 @@ int main(int argc, const char **argv)
     {
         send_message(argv[1], argv[2], msg);
     }
-    catch (std::runtime_error e)
+    catch (std::runtime_error &e)
     {
         printf("%s", e.what());
     }

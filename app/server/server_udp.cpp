@@ -8,28 +8,26 @@
 
 #define SERVER_CAPACITY 10
 #define MAX_PORT_LENGTH 6
+#define MAX_MESSAGE_LENGTH 255
 
-void print_addr_info(const sockaddr_storage *sock_addr);
-void worker(sockaddr_storage *client_addr, const char *msg);
+void print_addr_info(std::unique_ptr<sockaddr_storage> sock_addr);
+void worker(std::unique_ptr<sockaddr_storage> client_addr, std::string msg);
 addrinfo *get_addr_list(const char *host, const char *port);
 int create_socket(const char *host, const char *port);
 void start_server(const char *host, const char *port);
 
-void worker(sockaddr_storage *client_addr, const char *msg)
+void worker(std::unique_ptr<sockaddr_storage> client_addr, std::string msg)
 {
-    print_addr_info(client_addr);
-    printf("message: %s\n", msg);
-
-    delete[] msg;
-    delete client_addr;
+    print_addr_info(std::move(client_addr));
+    printf("message: %s\n", msg.c_str());
 }
 
-void print_addr_info(const sockaddr_storage *sock_addr)
+void print_addr_info(std::unique_ptr<sockaddr_storage> sock_addr)
 {
     char addr[INET6_ADDRSTRLEN];
     char port[MAX_PORT_LENGTH];
-    getnameinfo(reinterpret_cast<const sockaddr *>(sock_addr),
-                sock_addr->ss_len,
+    getnameinfo(reinterpret_cast<const sockaddr *>(sock_addr.get()),
+                sizeof(sockaddr_storage),
                 addr,
                 INET6_ADDRSTRLEN,
                 port,
@@ -48,7 +46,7 @@ addrinfo *get_addr_list(const char *host, const char *port)
     hints.ai_family = AF_UNSPEC;
     hints.ai_flags = AI_PASSIVE;
 
-    if (getaddrinfo(host, port, &hints, &(addr_list)) == -1)
+    if (getaddrinfo(host, port, &hints, &(addr_list)) != 0)
         throw std::runtime_error(gai_strerror(errno));
 
     return addr_list;
@@ -63,7 +61,7 @@ int create_socket(const char *host, const char *port)
     {
         if ((s = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) != -1)
         {
-            if (bind(s, p->ai_addr, p->ai_addr->sa_len) != -1)
+            if (bind(s, p->ai_addr, sizeof(*p->ai_addr)) != -1)
                 break;
             else
                 close(s);
@@ -82,22 +80,22 @@ void start_server(const char *host, const char *port)
 {
     int s = create_socket(host, port);
 
-    printf("Server listning on port %s\n", port);
+    printf("Server listening on port %s\n", port);
 
     socklen_t clien_len = sizeof(sockaddr_storage);
+    char msg[MAX_MESSAGE_LENGTH + 1];
 
     while (true)
     {
-        sockaddr_storage *client_addr = new sockaddr_storage{};
-        char *msg = new char[1024];
-
+        auto client_addr = std::make_unique<sockaddr_storage>();
         recvfrom(s,
                  msg,
-                 1024,
+                 MAX_MESSAGE_LENGTH,
                  0,
-                 reinterpret_cast<sockaddr *>(client_addr),
+                 reinterpret_cast<sockaddr *>(client_addr.get()),
                  &clien_len);
-        std::thread w(worker, client_addr, msg);
+
+        std::thread w(worker, std::move(client_addr), msg);
         w.detach();
     }
 }
@@ -114,7 +112,7 @@ int main(int argc, const char **argv)
     {
         start_server(argv[1], argv[2]);
     }
-    catch (std::runtime_error e)
+    catch (std::runtime_error &e)
     {
         printf("Exception occured: %s", e.what());
     }
