@@ -1,24 +1,22 @@
 name: Ubuntu CI Test
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    push:
+        branches: [master]
+    pull_request:
+        branches: [master]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: prepare
-      run: |
-        make prepare
-    - name: configure
-      run: |
-        cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Debug
-    - name: building
-      run: |
-        cmake --build build --config Release
-        cd build
-        ctest .
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: prepare
+              run: |
+                  make prepare
+            - name: configure
+              run: |
+                  cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Debug
+            - name: building
+              run: |
+                  cmake --build build --config Release

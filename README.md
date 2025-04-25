@@ -12,9 +12,7 @@ The project uses CMake build tools for project configuration.
 You will need a C++ compiler which supports the C++20 standard. Tested with Clang 16.0.0 and GNU 14.2
 
 * clone the repository
-* `make install`
-* `make prepare`
-* ececute the command `cmake --build . --config Release -j 10 --` to build the project
+* `make build`
 * the executables can be found in the {project_root}/build/bin/Release
 
 ### Usage example

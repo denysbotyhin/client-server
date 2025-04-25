@@ -1,8 +1,6 @@
-all: prepare
+all: build
 
-install:
-	sudo apt-get install gcc g++ cmake
-
-prepare:
+build:
 	rm -rf build
 	mkdir build
+	cmake --build . --config Release -j 10 --
