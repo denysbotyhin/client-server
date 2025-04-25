@@ -1,0 +1,24 @@
+name: MacOS CI Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+    - uses: actions/checkout@v2
+    - name: prepare
+      run: |
+        make prepare
+    - name: configure
+      run: |
+        cmake -H. -Bbuild -DCMAKE_BUILD_TYPE="Debug"
+    - name: building and testing
+      run: |
+        cmake --build build --config Debug
+        cd build
+        ctest .
