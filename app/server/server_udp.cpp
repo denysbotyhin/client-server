@@ -1,10 +1,10 @@
+#include <arpa/inet.h>
+#include <exception>
+#include <netdb.h>
 #include <stdio.h>
 #include <sys/socket.h>
-#include <exception>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netdb.h>
 #include <thread>
+#include <unistd.h>
 
 #define SERVER_CAPACITY 10
 #define MAX_PORT_LENGTH 6
@@ -30,8 +30,10 @@ void print_addr_info(const sockaddr_storage *sock_addr)
     char port[MAX_PORT_LENGTH];
     getnameinfo(reinterpret_cast<const sockaddr *>(sock_addr),
                 sock_addr->ss_len,
-                addr, INET6_ADDRSTRLEN,
-                port, MAX_PORT_LENGTH,
+                addr,
+                INET6_ADDRSTRLEN,
+                port,
+                MAX_PORT_LENGTH,
                 NI_NUMERICHOST | NI_NUMERICSERV);
 
     printf("Client: %s:%s\n", addr, port);
@@ -89,7 +91,10 @@ void start_server(const char *host, const char *port)
         sockaddr_storage *client_addr = new sockaddr_storage{};
         char *msg = new char[1024];
 
-        recvfrom(s, msg, 1024, 0,
+        recvfrom(s,
+                 msg,
+                 1024,
+                 0,
                  reinterpret_cast<sockaddr *>(client_addr),
                  &clien_len);
         std::thread w(worker, client_addr, msg);

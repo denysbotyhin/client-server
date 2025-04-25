@@ -1,13 +1,13 @@
-#include <string>
-#include <tuple>
-#include <iostream>
-#include <stdio.h>
-#include <sys/socket.h>
-#include <exception>
-#include <unistd.h>
 #include <arpa/inet.h>
+#include <exception>
+#include <iostream>
 #include <netdb.h>
+#include <stdio.h>
+#include <string>
+#include <sys/socket.h>
 #include <thread>
+#include <tuple>
+#include <unistd.h>
 
 #define SERVER_CAPACITY 10
 #define MAX_PORT_LENGTH 6
@@ -16,7 +16,8 @@ void print_addr_info(const sockaddr_storage *sock_addr);
 void worker(sockaddr_storage *client_addr, const char *msg);
 addrinfo *get_addr_list(const char *host, const char *port);
 void start_server(const char *host, const char *port);
-std::tuple<int, sockaddr_storage, socklen_t> create_socket(const char *host, const char *port);
+std::tuple<int, sockaddr_storage, socklen_t> create_socket(const char *host,
+                                                           const char *port);
 
 addrinfo *get_addr_list(const char *host, const char *port)
 {
@@ -32,7 +33,8 @@ addrinfo *get_addr_list(const char *host, const char *port)
     return addr_list;
 }
 
-std::tuple<int, sockaddr_storage, socklen_t> create_socket(const char *host, const char *port)
+std::tuple<int, sockaddr_storage, socklen_t> create_socket(const char *host,
+                                                           const char *port)
 {
     addrinfo *addr_list = get_addr_list(host, port);
     sockaddr_storage server{};
@@ -63,8 +65,12 @@ void send_message(const char *host, const char *port, const char *msg)
     for (int i = 0; i < 100; i++)
     {
 
-        if (sendto(s, msg, strlen(msg), 0,
-                   reinterpret_cast<sockaddr *>(&servaddr), addrlen) < 0)
+        if (sendto(s,
+                   msg,
+                   strlen(msg),
+                   0,
+                   reinterpret_cast<sockaddr *>(&servaddr),
+                   addrlen) < 0)
             throw std::runtime_error(strerror(errno));
     }
 

@@ -1,11 +1,11 @@
+#include <arpa/inet.h>
+#include <exception>
 #include <iostream>
+#include <netdb.h>
 #include <stdio.h>
 #include <sys/socket.h>
-#include <exception>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <netdb.h>
 #include <thread>
+#include <unistd.h>
 
 #define SERVER_CAPACITY 10
 
