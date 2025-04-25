@@ -1,6 +1,8 @@
-all: build
+all: prepare
 
-build:
+prepare:
 	rm -rf build
 	mkdir build
+
+build:
 	cmake --build . --config Release -j 10 --
